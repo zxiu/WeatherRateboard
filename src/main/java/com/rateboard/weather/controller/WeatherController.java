@@ -2,10 +2,6 @@ package com.rateboard.weather.controller;
 
 import javax.annotation.PostConstruct;
 
-import org.asynchttpclient.AsyncCompletionHandler;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.Response;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,7 +10,9 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.rateboard.weather.api.ApiFactory;
 import com.rateboard.weather.dao.CityDaoImp;
-import com.sun.istack.internal.Nullable;
+import com.rateboard.weather.dao.WeatherForecast10DayDao;
+import com.rateboard.weather.entity.City;
+import com.rateboard.weather.service.ApiService;
 
 @Controller
 public class WeatherController {
@@ -25,59 +23,34 @@ public class WeatherController {
 		// executeTask();
 	}
 
-	@RequestMapping("/")
-	public ModelAndView index(@Nullable @RequestParam(value = "country", required = false) String country,
+	@RequestMapping("/index")
+	public ModelAndView index(@RequestParam(value = "country", required = false) String country,
 	    @RequestParam(value = "city", required = false) String city) {
-		System.out.println("city=" + city);
+		ModelAndView modelAndView=new ModelAndView("index");
+		WeatherForecast10DayDao.listWeathers();
 		if (CityDaoImp.getCount() == 0) {
 			CityDaoImp.fillInSampleCities();
 		}
 		if (country != null && city != null) {
-			System.out.println(ApiFactory.make10DayApiUrl(country, city));
+			City cityObj = CityDaoImp.getCityByNameAndCountry(city, country);
+			if (cityObj != null) {
+				String result = ApiService.executeTask(ApiFactory.make10DayApiUrl(cityObj));
+				System.out.println(cityObj);
+				System.out.println(result);
+				modelAndView.addObject("weather", result);
+				WeatherForecast10DayDao.addResult(cityObj, result);
+			}
+			
+			// System.out.println(ApiService.executeTask(ApiFactory.make10DayApiUrl(country,
+			// city)));
+			// String result =
+			// ApiService.executeTask(ApiFactory.make10DayApiUrl(country, city));
+			// WeatherForecast10DayDao.addResult(city, result)
 		}
-		return new ModelAndView("index", "cities", CityDaoImp.listCities());
+		
+		modelAndView.addObject("cities", CityDaoImp.listCities());
+
+		return modelAndView;
 	}
 
-	@RequestMapping("/welcome")
-	public ModelAndView helloWorld() {
-		String message = "<br><div style='text-align:center;'>"
-		    + "<h3>********** Hello World, Spring MVC Tutorial</h3>This message is coming from CrunchifyHelloWorld.java **********</div><br><br>";
-		// executeTask();
-		// CityDaoImp.listCities();
-
-		return new ModelAndView("welcome", "message", message);
-	}
-
-	@RequestMapping("/weatherforecast10days")
-	public ModelAndView weatherForecast10Days() throws InterruptedException {
-		// executeTask();
-		return new ModelAndView("weatherforecast10day", "result", result);
-	}
-
-	@RequestMapping("/initiatecities")
-	public RedirectView initiateCities() {
-		System.out.println(" hahhahahahah");
-		CityDaoImp.fillInSampleCities();
-		return new RedirectView("");
-	}
-
-	public void executeTask() {
-		AsyncHttpClient client = new DefaultAsyncHttpClient();
-		client.prepareGet("http://api.wunderground.com/api/76d7b6a0e22e37bb/forecast10day/q/CA/San_Francisco.json")
-		    .execute(new AsyncCompletionHandler<Response>() {
-
-			    @Override
-			    public Response onCompleted(Response arg0) throws Exception {
-				    // TODO Auto-generated method stub
-				    System.out.println(arg0.getResponseBody());
-				    result = arg0.getResponseBody();
-				    return arg0;
-			    }
-
-			    @Override
-			    public void onThrowable(Throwable t) {
-				    super.onThrowable(t);
-			    }
-		    });
-	}
 }

@@ -9,17 +9,13 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.sun.istack.internal.NotNull;
-
 @Entity
-@Embeddable
 @Table(name = "CITY", uniqueConstraints = @UniqueConstraint(columnNames = { "name", "country" }))
 public class City {
 	
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@NotNull
 	private Integer id;
 
 	@Column(name = "name")

@@ -6,9 +6,11 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
 import com.rateboard.weather.Application;
 import com.rateboard.weather.entity.City;
@@ -17,7 +19,7 @@ public class CityDaoImp {
 	public static List<City> listCities() {
 		Session session = Application.getSessionFactory().openSession();
 		Transaction tx = null;
-		List<City> cities=new ArrayList<City>();
+		List<City> cities = new ArrayList<City>();
 		System.out.print("CityDaoImp: ");
 		try {
 			tx = session.beginTransaction();
@@ -58,11 +60,11 @@ public class CityDaoImp {
 		} finally {
 			session.close();
 		}
-
 		return id;
 	}
-	//76d7b6a0e22e37bb
-	public static void fillInSampleCities(){
+
+	// 76d7b6a0e22e37bb
+	public static void fillInSampleCities() {
 		addCity("San_Francisco", "CA");
 		addCity("Saarbruecken", "Germany");
 		addCity("Berlin", "Germany");
@@ -77,14 +79,21 @@ public class CityDaoImp {
 		addCity("London", "United_Kingdom");
 		addCity("Paris", "France");
 	}
-	
-	public static Long getCount(){
+
+	public static Long getCount() {
 		Session session = Application.getSessionFactory().openSession();
-		return  (Long) session.createQuery("select count(*) from City").uniqueResult();
+		Long count = (Long) session.createQuery("select count(*) from City").uniqueResult();
+		session.close();
+		return count;
 	}
-	
-	public static City getCityByNameAndCountry(String name, String country){
-		return null;
+
+	public static City getCityByNameAndCountry(String name, String country) {
+		Session session = Application.getSessionFactory().openSession();
+		Criteria criteria = session.createCriteria(City.class);
+		criteria.add(Restrictions.eq("name", name)).add(Restrictions.eq("country", country));
+		City city = (City) criteria.uniqueResult();
+
+		return city;
 	}
-	
+
 }
