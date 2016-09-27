@@ -1,5 +1,6 @@
 package com.rateboard.weather.dao;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,17 +14,19 @@ import com.rateboard.weather.Application;
 import com.rateboard.weather.entity.City;
 
 public class CityDaoImp {
-	public static void listCities() {
+	public static List<City> listCities() {
 		Session session = Application.getSessionFactory().openSession();
 		Transaction tx = null;
+		List<City> cities=new ArrayList<City>();
 		System.out.print("CityDaoImp: ");
 		try {
 			tx = session.beginTransaction();
-			List employees = session.createQuery("FROM com.rateboard.weather.entries.City").list();
-			for (Iterator iterator = employees.iterator(); iterator.hasNext();) {
+			@SuppressWarnings("deprecation")
+			List cs = session.createQuery("FROM City").list();
+			for (Iterator iterator = cs.iterator(); iterator.hasNext();) {
 				City city = (City) iterator.next();
-				System.out.print("First Name: " + city.getName());
-				System.out.print("  Last Name: " + city.getCountry());
+				cities.add(city);
+				System.out.println(city);
 			}
 			tx.commit();
 		} catch (HibernateException e) {
@@ -33,6 +36,7 @@ public class CityDaoImp {
 		} finally {
 			session.close();
 		}
+		return cities;
 	}
 
 	public static Integer addCity(String name, String country) {
@@ -72,6 +76,15 @@ public class CityDaoImp {
 		addCity("Graz", "Austria");
 		addCity("London", "United_Kingdom");
 		addCity("Paris", "France");
-		
 	}
+	
+	public static Long getCount(){
+		Session session = Application.getSessionFactory().openSession();
+		return  (Long) session.createQuery("select count(*) from City").uniqueResult();
+	}
+	
+	public static City getCityByNameAndCountry(String name, String country){
+		return null;
+	}
+	
 }
