@@ -1,6 +1,7 @@
 package com.rateboard.weather.controller;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.New;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,12 +41,14 @@ public class WeatherController {
 				if (weather != null) {
 					result = weather.getResult();
 				}
-				
-				System.out.println("result="+result);
+
+				System.out.println("result=" + result);
 				if (result == null) {
 					result = ApiService.executeTask(ApiFactory.make10DayApiUrl(cityObj));
 					WeatherForecast10DayDao.addWeatherResult(cityObj, result);
 				}
+				modelAndView.addObject("items",
+				    new String[] { "high", "low", "avehumidity", "qpf_allday", "qpf_day", "qpf_night" });
 				modelAndView.addObject("weather", result);
 			}
 		}

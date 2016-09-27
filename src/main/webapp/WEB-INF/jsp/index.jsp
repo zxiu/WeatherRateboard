@@ -30,7 +30,7 @@ body {
     </ul>
     <div id="data" class="hide">${weather}</div>
 
-    <div id="exTab1" class="container">
+    <div id="exTab1" class="container hide">
       <ul class="nav nav-tabs">
         <li class="active"><a id="title0" href="#0a"
           data-toggle="tab"></a></li>
@@ -57,10 +57,36 @@ body {
         <div class="tab-pane" id="9a"></div>
       </div>
     </div>
-
+    <table class="table">
+      <thead>
+        <tr>
+          <th></th>
+          <c:forEach begin="0" end="9" varStatus="loop">
+            <th class="title ${loop.index}">${loop.index}</th>
+          </c:forEach>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td></td>
+          <c:forEach begin="0" end="9" varStatus="loop">
+            <td class="text-center"><img src=""
+              class="icon ${loop.index}" /></td>
+          </c:forEach>
+        </tr>
+        <c:forEach var="item" items="${items}">
+          <tr>
+            <td class="text-center">${item}</td>
+            <c:forEach begin="0" end="9" varStatus="loop">
+              <td class="text-center ${item} ${loop.index}">sad</td>
+            </c:forEach>
+          </tr>
+        </c:forEach>
+      </tbody>
+    </table>
     <div id="template">
       <img src="" class="icon" />
-      
+
     </div>
 
   </div>
@@ -78,18 +104,24 @@ body {
 				var forecastday = simpleforecast.forecastday;
 
 				for (var i = 0; i < 10; i++) {
-					if (i == 0) {
+					if (i == 5) {
 						console.log(forecastday[i]);
 					}
 					var f = forecastday[i];
-					$("#title" + i).html(
+					$(".title." + i).html(
 							f.date.year + " " + f.date.monthname_short + " " + f.date.day);
-
-					var template = $("#template").clone();
-					$("#"+i+"a").append(template);
-					template.find(".icon").attr("src", f.icon_url)
-					
+					$(".icon." + i).attr("src", f.icon_url);
+					setTdValue("high", i, f.high.celsius)
+					setTdValue("low", i, f.low.celsius)
+					setTdValue("avehumidity", i, f.avehumidity)
+					setTdValue("qpf_allday", i, f.qpf_allday.mm)
+					setTdValue("qpf_day", i, f.qpf_day.mm)
+					setTdValue("qpf_night", i, f.qpf_night.mm)
 				}
+			}
+			
+			function setTdValue(td, i, value, suffix) {
+				$("." + td + "." + i).html(value);
 			}
 		</script>
 </body>
