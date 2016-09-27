@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
 import com.rateboard.weather.Application;
 import com.rateboard.weather.entity.City;
@@ -14,7 +16,7 @@ import com.rateboard.weather.entity.WeatherForecast10Day;
 
 public class WeatherForecast10DayDao {
 
-	public static Integer addResult(City city, String result) {
+	public static Integer addWeatherResult(City city, String result) {
 		Session session = Application.getSessionFactory().openSession();
 		Transaction tx = null;
 		Integer id = null;
@@ -34,6 +36,15 @@ public class WeatherForecast10DayDao {
 			session.close();
 		}
 		return id;
+	}
+	
+	public static WeatherForecast10Day queryByCity(City city){
+		Session session = Application.getSessionFactory().openSession();
+		Criteria criteria = session.createCriteria(WeatherForecast10Day.class);
+		criteria.createCriteria("city", "c");
+		criteria.add(Restrictions.eq("c.id", city.getId()));
+		WeatherForecast10Day weatherForecast10Day = (WeatherForecast10Day) criteria.uniqueResult();
+		return weatherForecast10Day;
 	}
 	
 	public static List<WeatherForecast10Day> listWeathers() {

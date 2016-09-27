@@ -12,6 +12,7 @@ import com.rateboard.weather.api.ApiFactory;
 import com.rateboard.weather.dao.CityDaoImp;
 import com.rateboard.weather.dao.WeatherForecast10DayDao;
 import com.rateboard.weather.entity.City;
+import com.rateboard.weather.entity.WeatherForecast10Day;
 import com.rateboard.weather.service.ApiService;
 
 @Controller
@@ -26,7 +27,7 @@ public class WeatherController {
 	@RequestMapping("/index")
 	public ModelAndView index(@RequestParam(value = "country", required = false) String country,
 	    @RequestParam(value = "city", required = false) String city) {
-		ModelAndView modelAndView=new ModelAndView("index");
+		ModelAndView modelAndView = new ModelAndView("index");
 		WeatherForecast10DayDao.listWeathers();
 		if (CityDaoImp.getCount() == 0) {
 			CityDaoImp.fillInSampleCities();
@@ -34,22 +35,22 @@ public class WeatherController {
 		if (country != null && city != null) {
 			City cityObj = CityDaoImp.getCityByNameAndCountry(city, country);
 			if (cityObj != null) {
-				String result = ApiService.executeTask(ApiFactory.make10DayApiUrl(cityObj));
-				System.out.println(cityObj);
-				System.out.println(result);
+				WeatherForecast10Day weather = WeatherForecast10DayDao.queryByCity(cityObj);
+				String result = null;
+				if (weather != null) {
+					result = weather.getResult();
+				}
+				
+				System.out.println("result="+result);
+				if (result == null) {
+					result = ApiService.executeTask(ApiFactory.make10DayApiUrl(cityObj));
+					WeatherForecast10DayDao.addWeatherResult(cityObj, result);
+				}
 				modelAndView.addObject("weather", result);
-				WeatherForecast10DayDao.addResult(cityObj, result);
 			}
-			
-			// System.out.println(ApiService.executeTask(ApiFactory.make10DayApiUrl(country,
-			// city)));
-			// String result =
-			// ApiService.executeTask(ApiFactory.make10DayApiUrl(country, city));
-			// WeatherForecast10DayDao.addResult(city, result)
 		}
-		
-		modelAndView.addObject("cities", CityDaoImp.listCities());
 
+		modelAndView.addObject("cities", CityDaoImp.listCities());
 		return modelAndView;
 	}
 
