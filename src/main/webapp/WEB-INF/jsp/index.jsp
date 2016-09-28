@@ -89,7 +89,7 @@ body {
 				var forecastday = simpleforecast.forecastday;
 
 				for (var i = 0; i < 10; i++) {
-					if (i == 5) {
+					if (i == 0) {
 						console.log(forecastday[i]);
 					}
 					var f = forecastday[i];
@@ -102,6 +102,9 @@ body {
 					setTdValue("qpf_allday", i, f.qpf_allday.mm, "mm");
 					setTdValue("qpf_day", i, f.qpf_day.mm, "mm");
 					setTdValue("qpf_night", i, f.qpf_night.mm, "mm");
+					setTdValue("snow_allday", i, f.snow_allday.cm, "cm");
+					setTdValue("snow_day", i, f.snow_day.cm, "cm");
+					setTdValue("snow_night", i, f.snow_night.cm, "cm");
 					setTdValue("maxwind", i, f.maxwind.mph + "/" + f.maxwind.degrees
 							+ "°", "mph");
 				}

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.rateboard.weather.api.ApiManager;
 import com.rateboard.weather.dao.CityDao;
 import com.rateboard.weather.dao.Weather10DayDao;
 import com.rateboard.weather.entity.City;
@@ -17,16 +18,16 @@ import com.rateboard.weather.validator.ResponseValidator;
 
 @Controller
 public class WeatherController {
-	
+
 	@Autowired
 	CityDao cityDao;
-	
+
 	@Autowired
 	Weather10DayDao weather10DayDao;
-	
+
 	@Autowired
 	WeatherTask weatherTask;
-	
+
 	@RequestMapping("/index")
 	public ModelAndView index(@RequestParam(value = "country", required = false) String country,
 	    @RequestParam(value = "city", required = false) String city) {
@@ -54,8 +55,7 @@ public class WeatherController {
 					}
 				}
 				modelAndView.addObject("city", cityObj);
-				modelAndView.addObject("items",
-				    new String[] { "high", "low", "avehumidity", "qpf_allday", "qpf_day", "qpf_night", "maxwind" });
+				modelAndView.addObject("items", ApiManager.getDefaultItems());
 				modelAndView.addObject("weather", result);
 			}
 		}

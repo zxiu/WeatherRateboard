@@ -82,6 +82,9 @@ public class CityDao {
 		addCity("Graz", "Austria");
 		addCity("London", "United_Kingdom");
 		addCity("Paris", "France");
+		addCity("Rome", "Italy");
+		addCity("Peking", "China");
+		addCity("Shanghai", "China");
 	}
 
 	public Long getCount() {
