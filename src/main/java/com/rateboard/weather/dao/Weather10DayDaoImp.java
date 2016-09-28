@@ -8,13 +8,15 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import com.rateboard.weather.Application;
 import com.rateboard.weather.entity.City;
-import com.rateboard.weather.entity.WeatherForecast10Day;
+import com.rateboard.weather.entity.Weather10Day;
 
-public class WeatherForecast10DayDao {
+public class Weather10DayDaoImp {
 
 	public static Integer addWeatherResult(City city, String result) {
 		Session session = Application.getSessionFactory().openSession();
@@ -22,7 +24,7 @@ public class WeatherForecast10DayDao {
 		Integer id = null;
 		try {
 			tx = session.beginTransaction();
-			WeatherForecast10Day weather = new WeatherForecast10Day();
+			Weather10Day weather = new Weather10Day();
 			weather.setCity(city);
 			weather.setResult(result);
 			id = (Integer) session.save(weather);
@@ -37,28 +39,26 @@ public class WeatherForecast10DayDao {
 		}
 		return id;
 	}
-	
-	public static WeatherForecast10Day queryByCity(City city){
+
+	public static Weather10Day queryByCity(City city) {
 		Session session = Application.getSessionFactory().openSession();
-		Criteria criteria = session.createCriteria(WeatherForecast10Day.class);
+		Criteria criteria = session.createCriteria(Weather10Day.class);
 		criteria.createCriteria("city", "c");
 		criteria.add(Restrictions.eq("c.id", city.getId()));
-		WeatherForecast10Day weatherForecast10Day = (WeatherForecast10Day) criteria.uniqueResult();
-		return weatherForecast10Day;
+		Weather10Day weather10Day = (Weather10Day) criteria.list().get(0);
+		return weather10Day;
 	}
-	
-	public static List<WeatherForecast10Day> listWeathers() {
+
+	public static List<Weather10Day> listWeathers() {
 		Session session = Application.getSessionFactory().openSession();
 		Transaction tx = null;
-		List<WeatherForecast10Day> weathers = new ArrayList<>();
+		List<Weather10Day> weathers = new ArrayList<>();
 		try {
 			tx = session.beginTransaction();
-			@SuppressWarnings("deprecation")
-			List cs = session.createQuery("FROM WeatherForecast10Day").list();
-			for (Iterator iterator = cs.iterator(); iterator.hasNext();) {
-				WeatherForecast10Day weatherForecast10Day = (WeatherForecast10Day) iterator.next();
-				weathers.add(weatherForecast10Day);
-				System.out.println(weatherForecast10Day);
+			for (Object o : session.createQuery("FROM Weather10Day").getResultList()) {
+				if (o instanceof Weather10Day) {
+					weathers.add((Weather10Day) o);
+				}
 			}
 			tx.commit();
 		} catch (HibernateException e) {

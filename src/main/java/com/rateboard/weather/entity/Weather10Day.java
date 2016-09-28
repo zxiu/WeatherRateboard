@@ -16,8 +16,8 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
-@Table(name = "WeatherForecast10Day")
-public class WeatherForecast10Day {
+@Table(name = "Weather10Day")
+public class Weather10Day {
 
 	@Id
 	@Column(name = "id")

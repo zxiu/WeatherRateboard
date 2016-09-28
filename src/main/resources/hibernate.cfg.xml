@@ -9,8 +9,8 @@
 		<property name="hibernate.connection.url">jdbc:mysql://localhost/test?createDatabaseIfNotExist=true</property>
 		<property name="hibernate.connection.username">root</property>
 		<property name="hibernate.connection.password">root</property>
-		<property name="hibernate.show_sql">true </property>
-		<property name="hibernate.format_sql">true </property>
+		<property name="hibernate.show_sql">true  </property>
+		<property name="hibernate.format_sql">false </property>
 		<property name="hibernate.hbm2ddl.auto">create-drop</property>
 		<!-- <property name="javax.persistence.validation.mode">NONE</property>  -->
 		<!-- List of XML mapping files -->

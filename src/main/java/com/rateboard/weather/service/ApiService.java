@@ -28,17 +28,22 @@ public class ApiService {
 			response = httpclient.execute(httpGet);
 			System.out.println(response.getStatusLine());
 			HttpEntity entity = response.getEntity();
-			// do something useful with the response body
-			// and ensure it is fully consumed
 			result = EntityUtils.toString(entity);
 			EntityUtils.consume(entity);
 			response.close();
 			httpclient.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (IOException e) { 
 			e.printStackTrace();
 		}
-
 		return result;
+	}
+
+	public static boolean vaildate(String result) {
+		if (result == null) {
+			return false;
+		}
+		
+
+		return true;
 	}
 }

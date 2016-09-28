@@ -14,21 +14,19 @@ import org.hibernate.criterion.Restrictions;
 
 import com.rateboard.weather.Application;
 import com.rateboard.weather.entity.City;
+import com.rateboard.weather.entity.Weather10Day;
 
 public class CityDaoImp {
 	public static List<City> listCities() {
 		Session session = Application.getSessionFactory().openSession();
 		Transaction tx = null;
 		List<City> cities = new ArrayList<City>();
-		System.out.print("CityDaoImp: ");
 		try {
 			tx = session.beginTransaction();
-			@SuppressWarnings("deprecation")
-			List cs = session.createQuery("FROM City").list();
-			for (Iterator iterator = cs.iterator(); iterator.hasNext();) {
-				City city = (City) iterator.next();
-				cities.add(city);
-				System.out.println(city);
+			for (Object o:session.createQuery("FROM City").getResultList()){
+				if (o instanceof City){
+					cities.add((City) o);
+				}
 			}
 			tx.commit();
 		} catch (HibernateException e) {
@@ -51,7 +49,6 @@ public class CityDaoImp {
 			city.setName(name);
 			city.setCountry(country);
 			id = (Integer) session.save(city);
-			System.out.println("add city=" + city);
 			tx.commit();
 		} catch (HibernateException e) {
 			if (tx != null)
@@ -92,7 +89,6 @@ public class CityDaoImp {
 		Criteria criteria = session.createCriteria(City.class);
 		criteria.add(Restrictions.eq("name", name)).add(Restrictions.eq("country", country));
 		City city = (City) criteria.uniqueResult();
-
 		return city;
 	}
 
