@@ -1,33 +1,34 @@
 package com.rateboard.weather.dao;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-
-import javax.persistence.EntityManager;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.rateboard.weather.Application;
 import com.rateboard.weather.entity.City;
-import com.rateboard.weather.entity.Weather10Day;
 
+@Repository
+@Transactional
 public class CityDao {
-	public static List<City> listCities() {
+
+	public List<City> listCities() {
 		Session session = Application.getSessionFactory().openSession();
 		Transaction tx = null;
 		List<City> cities = new ArrayList<City>();
 		try {
 			tx = session.beginTransaction();
-			for (Object o:session.createQuery("FROM City").getResultList()){
-				if (o instanceof City){
+			for (Object o : session.createQuery("FROM City").getResultList()) {
+				if (o instanceof City) {
 					cities.add((City) o);
 				}
-			} 
+			}
 			tx.commit();
 		} catch (HibernateException e) {
 			if (tx != null)
@@ -39,7 +40,14 @@ public class CityDao {
 		return cities;
 	}
 
-	public static Integer addCity(String name, String country) {
+	public Integer addCity(City city) {
+		return addCity(city.getName(), city.getCountry());
+	}
+
+	public Integer addCity(String name, String country) {
+		if (findCity(name, country) != null) {
+			return null;
+		}
 		Session session = Application.getSessionFactory().openSession();
 		Transaction tx = null;
 		Integer id = null;
@@ -50,7 +58,7 @@ public class CityDao {
 			city.setCountry(country);
 			id = (Integer) session.save(city);
 			tx.commit();
-		} catch (HibernateException e) {
+		} catch (Exception e) {
 			if (tx != null)
 				tx.rollback();
 			e.printStackTrace();
@@ -60,8 +68,7 @@ public class CityDao {
 		return id;
 	}
 
-	// 76d7b6a0e22e37bb
-	public static void fillInSampleCities() {
+	public void fillInSampleCities() {
 		addCity("San_Francisco", "CA");
 		addCity("Saarbruecken", "Germany");
 		addCity("Berlin", "Germany");
@@ -77,14 +84,14 @@ public class CityDao {
 		addCity("Paris", "France");
 	}
 
-	public static Long getCount() {
+	public Long getCount() {
 		Session session = Application.getSessionFactory().openSession();
 		Long count = (Long) session.createQuery("select count(*) from City").uniqueResult();
 		session.close();
 		return count;
 	}
 
-	public static City getCityByNameAndCountry(String name, String country) {
+	public City findCity(String name, String country) {
 		Session session = Application.getSessionFactory().openSession();
 		Criteria criteria = session.createCriteria(City.class);
 		criteria.add(Restrictions.eq("name", name)).add(Restrictions.eq("country", country));

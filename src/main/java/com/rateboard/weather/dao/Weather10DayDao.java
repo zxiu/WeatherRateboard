@@ -11,14 +11,18 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.rateboard.weather.Application;
 import com.rateboard.weather.entity.City;
 import com.rateboard.weather.entity.Weather10Day;
 
+@Repository
+@Transactional
 public class Weather10DayDao {
 
-	public static Integer addWeatherResult(City city, String result) {
+	public Integer addWeatherResult(City city, String result) {
 		Session session = Application.getSessionFactory().openSession();
 		Transaction tx = null;
 		Integer id = null;
@@ -40,7 +44,7 @@ public class Weather10DayDao {
 		return id;
 	}
 
-	public static Weather10Day queryByCity(City city) {
+	public Weather10Day findWeatherByCi(City city) {
 		Session session = Application.getSessionFactory().openSession();
 		Criteria criteria = session.createCriteria(Weather10Day.class);
 		criteria.createCriteria("city", "c");
@@ -52,7 +56,7 @@ public class Weather10DayDao {
 		return weather10Day;
 	}
 
-	public static List<Weather10Day> listWeathers() {
+	public List<Weather10Day> listWeathers() {
 		Session session = Application.getSessionFactory().openSession();
 		Transaction tx = null;
 		List<Weather10Day> weathers = new ArrayList<>();

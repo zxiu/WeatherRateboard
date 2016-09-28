@@ -1,27 +1,18 @@
-package com.rateboard.weather.service;
+package com.rateboard.weather.util;
 
 import java.io.IOException;
-import java.io.InputStream;
 
-import org.apache.catalina.connector.Request;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
 
-@Service
-public class ApiService {
-
-	@Async
-	public static String executeTask(String api) {
+public class NetUtils {
+	public static String executeApi(String url) {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
-		HttpGet httpGet = new HttpGet(api);
+		HttpGet httpGet = new HttpGet(url);
 		CloseableHttpResponse response;
 		String result = null;
 		try {
@@ -36,14 +27,5 @@ public class ApiService {
 			e.printStackTrace();
 		}
 		return result;
-	}
-
-	public static boolean vaildate(String result) {
-		if (result == null) {
-			return false;
-		}
-		
-
-		return true;
 	}
 }
