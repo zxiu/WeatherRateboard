@@ -33,19 +33,19 @@ public class WeatherController {
 				String result = null;
 				if (weather != null) {
 					result = weather.getResult();
-					modelAndView.addObject("lastUpdate", weather.getCreatedAt());
-					modelAndView.addObject("message", "Load from Cache, longer taste better!");
+					modelAndView.addObject("message",
+					    "Load " + city + " from Cache at " + weather.getCreatedAt().toLocaleString());
 				}
 				if (result == null) {
 					result = ApiService.executeTask(ApiFactory.make10DayApiUrl(cityObj));
 					if (ResponseValidator.validWeather10Days(result)) {
 						Weather10DayDaoImp.addWeatherResult(cityObj, result);
-						modelAndView.addObject("lastUpdate", new Date());
-						modelAndView.addObject("message", "Load from internet, very fresh!");
+						modelAndView.addObject("message", "Load " + city + " from internet at " + new Date().toLocaleString());
 					} else {
-						modelAndView.addObject("message", "Sth wrong :(");
+						modelAndView.addObject("error", "Sth wrong :(");
 					}
 				}
+				modelAndView.addObject("city", cityObj);
 				modelAndView.addObject("items",
 				    new String[] { "high", "low", "avehumidity", "qpf_allday", "qpf_day", "qpf_night", "maxwind" });
 				modelAndView.addObject("weather", result);

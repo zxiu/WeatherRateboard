@@ -22,7 +22,9 @@ body {
 <body>
   <div class="container primary">
     <div class="page-header">
-      <h1>Weather Forecast 10 days</h1>
+      <a href="/weather" style="text-decoration: none">
+        <h1>Weather Forecast 10 days</h1>
+      </a>
     </div>
     <ul class="nav nav-pills">
       <c:forEach var="city" items="${cities}">
@@ -30,13 +32,25 @@ body {
           href="?country=${city.country}&city=${city.name}">${city.name}</a></li>
       </c:forEach>
     </ul>
+    <c:if test="${city!=null}">
+      <div class='alert alert-${error==null?"success":"warning" }'
+        role="alert">
+        ${message} <strong>${error}</strong>
+      </div>
+    </c:if>
+    <c:if test="${city==null}">
+      <img id="map" usemap="#planetmap"
+        src="https://scontent.ftxl1-1.fna.fbcdn.net/v/t1.0-9/14517598_635694859926798_2421197280889107570_n.jpg?oh=308efc55365ae369a85f8360c58128c1&oe=5874064B"
+        style="width: 100%;" />
+    </c:if>
+
     <div id="data" class="hide">${weather}</div>
-    <table class="table">
+    <table class="table hidden" id="weather_table">
       <thead>
         <tr>
           <th></th>
           <c:forEach begin="0" end="9" varStatus="loop">
-            <th class="title ${loop.index}">${loop.index}</th>
+            <th class="title ${loop.index}"></th>
           </c:forEach>
         </tr>
       </thead>
@@ -88,9 +102,10 @@ body {
 					setTdValue("qpf_allday", i, f.qpf_allday.mm, "mm");
 					setTdValue("qpf_day", i, f.qpf_day.mm, "mm");
 					setTdValue("qpf_night", i, f.qpf_night.mm, "mm");
-					setTdValue("maxwind", i, f.maxwind.mph + "/" + f.maxwind.degrees + "°",
-							"mph");
+					setTdValue("maxwind", i, f.maxwind.mph + "/" + f.maxwind.degrees
+							+ "°", "mph");
 				}
+				$('#weather_table').fadeIn().removeClass('hidden');
 			}
 
 			function setTdValue(td, i, value, unit) {

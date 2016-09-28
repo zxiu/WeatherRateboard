@@ -45,7 +45,10 @@ public class Weather10DayDaoImp {
 		Criteria criteria = session.createCriteria(Weather10Day.class);
 		criteria.createCriteria("city", "c");
 		criteria.add(Restrictions.eq("c.id", city.getId()));
-		Weather10Day weather10Day = (Weather10Day) criteria.list().get(0);
+		Weather10Day weather10Day = null;
+		if (criteria.list().size() > 0) {
+			weather10Day = (Weather10Day) criteria.list().get(0);
+		}
 		return weather10Day;
 	}
 
