@@ -1,14 +1,11 @@
-package com.rateboard.weather;
 
-import java.util.Iterator;
-import java.util.List;
+package com.rateboard.weather.entity;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import com.rateboard.weather.entity.City;
+import com.rateboard.weather.Application;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -60,27 +57,4 @@ public class CityTest extends TestCase {
 		System.out.println("test main");
 	}
 
-
-	/* Method to READ all the employees */
-	public void listEmployees() {
-		Session session = Application.getSessionFactory().openSession();
-		Transaction tx = null;
-		System.out.print("listEmployees: ");
-		try {
-			tx = session.beginTransaction();
-			List employees = session.createQuery("FROM com.rateboard.weather.entries.City").list();
-			for (Iterator iterator = employees.iterator(); iterator.hasNext();) {
-				City city = (City) iterator.next();
-				System.out.print("First Name: " + city.getName());
-				System.out.print("  Last Name: " + city.getCountry());
-			}
-			tx.commit();
-		} catch (HibernateException e) {
-			if (tx != null)
-				tx.rollback();
-			e.printStackTrace();
-		} finally {
-			session.close();
-		}
-	}
 }

@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.rateboard.weather.api.ApiFactory;
-import com.rateboard.weather.dao.CityDaoImp;
-import com.rateboard.weather.dao.Weather10DayDaoImp;
+import com.rateboard.weather.dao.CityDao;
+import com.rateboard.weather.dao.Weather10DayDao;
 import com.rateboard.weather.entity.City;
 import com.rateboard.weather.entity.Weather10Day;
 import com.rateboard.weather.service.ApiService;
@@ -22,14 +22,14 @@ public class WeatherController {
 	public ModelAndView index(@RequestParam(value = "country", required = false) String country,
 	    @RequestParam(value = "city", required = false) String city) {
 		ModelAndView modelAndView = new ModelAndView("index");
-		Weather10DayDaoImp.listWeathers();
-		if (CityDaoImp.getCount() == 0) {
-			CityDaoImp.fillInSampleCities();
+		Weather10DayDao.listWeathers();
+		if (CityDao.getCount() == 0) {
+			CityDao.fillInSampleCities();
 		}
 		if (country != null && city != null) {
-			City cityObj = CityDaoImp.getCityByNameAndCountry(city, country);
+			City cityObj = CityDao.getCityByNameAndCountry(city, country);
 			if (cityObj != null) {
-				Weather10Day weather = Weather10DayDaoImp.queryByCity(cityObj);
+				Weather10Day weather = Weather10DayDao.queryByCity(cityObj);
 				String result = null;
 				if (weather != null) {
 					result = weather.getResult();
@@ -39,7 +39,7 @@ public class WeatherController {
 				if (result == null) {
 					result = ApiService.executeTask(ApiFactory.make10DayApiUrl(cityObj));
 					if (ResponseValidator.validWeather10Days(result)) {
-						Weather10DayDaoImp.addWeatherResult(cityObj, result);
+						Weather10DayDao.addWeatherResult(cityObj, result);
 						modelAndView.addObject("message", "Load " + city + " from internet at " + new Date().toLocaleString());
 					} else {
 						modelAndView.addObject("error", "Sth wrong :(");
@@ -52,7 +52,7 @@ public class WeatherController {
 			}
 		}
 
-		modelAndView.addObject("cities", CityDaoImp.listCities());
+		modelAndView.addObject("cities", CityDao.listCities());
 		return modelAndView;
 	}
 

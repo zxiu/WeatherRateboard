@@ -16,7 +16,7 @@ import com.rateboard.weather.Application;
 import com.rateboard.weather.entity.City;
 import com.rateboard.weather.entity.Weather10Day;
 
-public class CityDaoImp {
+public class CityDao {
 	public static List<City> listCities() {
 		Session session = Application.getSessionFactory().openSession();
 		Transaction tx = null;
@@ -27,7 +27,7 @@ public class CityDaoImp {
 				if (o instanceof City){
 					cities.add((City) o);
 				}
-			}
+			} 
 			tx.commit();
 		} catch (HibernateException e) {
 			if (tx != null)

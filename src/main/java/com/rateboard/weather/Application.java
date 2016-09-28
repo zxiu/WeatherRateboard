@@ -22,9 +22,8 @@ public class Application {
 	static SessionFactory sessionFactory;
 
   public static void main(String[] args) {
-      ApplicationContext context = 
-          new AnnotationConfigApplicationContext(Application.class);
-      System.out.println(context.getBean(Weather10Day.class));
+      
+      
   }
   
 	public static SessionFactory getSessionFactory() {
